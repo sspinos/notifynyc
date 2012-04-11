@@ -1,0 +1,102 @@
+<script>
+  $(document).ready(function() {
+    var oTable;
+    oTable = $('#metric-table').dataTable( {
+      //"aaSorting": [ [0,'asc'], [1,'asc'], [2, 'asc'], [3, 'asc'], [4, 'asc'], [5, 'asc'], [6, 'asc'] ],
+      "aaSorting": [[ 4, "desc" ]],
+      "bProcessing": true,
+      "bJQueryUI": true,
+      "sPaginationType": "full_numbers",
+      "bServerSide": true,
+      "bPaginate": false,
+      "bLengthChange": true,
+      "bFilter": true,
+      "bSort": true,
+      "bStateSave": true,
+      "bInfo": false,
+      "bAutoWidth": true,
+      "aoColumns": [null,null,null,null,null,null],
+      //"sAjaxDataProp": "metric",
+      "fnServerData": function ( sUrl, aoData, fnCallback ){
+        //Optimize by setting the domain name in Global Var. Use localhost:3000 for development
+        var domain_key = "<%= Rails.env == "development" ? "http://175164762-huuIAwF6oFnZBXcfH2abd54qrnMIovATfb9MVveI:K4k5lrsSGpc9Sl3Ve1t9ceR7ZcyxrfaSIeOkpGxRE@localhost:3000":"http://175164762-huuIAwF6oFnZBXcfH2abd54qrnMIovATfb9MVveI:K4k5lrsSGpc9Sl3Ve1t9ceR7ZcyxrfaSIeOkpGxRE@notifynyc.herokuapp.com" %>"
+        $.get(domain_key+"/api/metrics.json", aoData, function(respond){
+          var data = [];
+          var plot = [];
+          for(var i=0;i <= respond.length; i++ ){
+            if(respond[i] != undefined){
+              plot.push(parseInt(respond[i]["metric"]["Time"]));
+              data.push(
+              {"Status_id":respond[i]["metric"]["Status_id"], 
+                "Text":respond[i]["metric"]["Text"],
+                "Accounts_Used":respond[i]["metric"]["Accounts_Used"],
+                "Followers_Count":respond[i]["metric"]["Followers_Count"],
+                "Time":respond[i]["metric"]["Time"],
+                "Failures":respond[i]["metric"]["Failures"],
+                "created_at":respond[i]["metric"]["created_at"]
+              }
+            );
+              $("#exportBtn").html("");
+              var key = $("#metric-table_filter input").val();
+              $("#exportBtn").html('<a href="'+respond[i]["metric"]['csv']+'?sSearch='+key+'" style="text-decoration:none; margin:10px; padding:10px; height: 18px; width: 24px; font-size: 16px;border: solid 1px black;">Download CSV</a>');
+            }
+          };
+          fnCallback({'aaData': data});
+          if(oTable.fnGetData().length < 1){
+            $("#exportBtn").html("");
+            $("#exportBtn").html("<a style='text-decoration:none; margin:10px; padding:10px; height: 18px; width: 24px; font-size: 16px;border: solid 1px black;'>Download CSV</a><br/><p style='color : red; margin: 10px'>Received Empty Data - 'Download CSV' Button Disabled</p>");
+          };
+          //setup Chart
+          if($('#chart').children().length > 0){
+            $('#chart').html("");
+          };
+          $.jqplot ('chart', [plot], {
+            title: 'Loading Time',
+            axesDefaults: {
+              labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+            },
+            axes: {
+              xaxis: {
+                label: "X Axis",
+                pad: 0
+              },
+              yaxis: {
+                label: "Y Axis"
+              }
+            }
+          });
+        });   
+        
+      },
+      "aoColumns": [
+        { "mDataProp": "Status_id" },
+        { "mDataProp": "Text" },
+        { "mDataProp": "Accounts_Used" },
+        { "mDataProp": "Followers_Count" },
+        { "mDataProp": "Time" },
+        { "mDataProp": "Failures" },
+        { "mDataProp": "created_at" }
+      ]
+    } );
+  } );
+  
+</script>
+<div id="chart" style="width: 100%; text-align: center;"></div>
+<br/>
+<div id="exportBtn">
+
+</div>
+<br/>
+<table id="metric-table">
+  <thead>
+    <tr>
+      <th>Status ID</th>
+      <th>Text</th>
+      <th>Accounts Used</th>
+      <th>Followers Count</th>
+      <th>Time</th>
+      <th>Failures</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+</table>

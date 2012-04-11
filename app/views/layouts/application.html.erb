@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= @title %></title>
+    <%= csrf_meta_tag %> 
+    <%= stylesheet_link_tag 'blueprint/screen', :media => 'screen' %>
+    <%= stylesheet_link_tag 'blueprint/print',  :media => 'print' %>
+    <%= stylesheet_link_tag 'custom', :media => 'screen' %>
+    <%= stylesheet_link_tag 'jquery-ui-1.8.16.custom.css', 'dt_page', 'dt_table'%>
+    <%= javascript_include_tag 'application', 'jquery-ui-1.8.16.custom.min', 'jquery.dataTables.min.js' %> 
+    <%= javascript_include_tag '/assets/jqplot/jquery.jqplot.min'%>
+    <!--<#%= javascript_include_tag 'jqplot/jquery.jqplot.min', 'jqplot/jqplot.pointLabels.min', 'jqplot/jqplot.enhancedLegendRenderer.min', 'jqplot/jqplot.dateAxisRenderer', 'jqplot/jqplot.cursor.min', 'jqplot/jqplot.categoryAxisRenderer.min', 'jqplot/jqplot.canvasAxisTickRenderer.min', 'jqplot/jqplot.barRenderer.min', 'jqplot/excanvas.min' %>  -->
+  </head>
+  <body>
+  <center>
+    <div class="container">
+      <table border="0" width="100%" height="500" >
+        <tr>
+          <td background="/images/head.png" height="30" width="100%" colspan="2"> </td>
+        </tr>
+        <tr>
+          <td background="/images/logo.gif" height="80" width="100%" colspan="2"> <%= render 'layouts/header' %> </td>
+        </tr>
+        <tr>
+          <td align="center"> <%= yield %> </td>
+        </tr>
+        <tr>
+          <td> <%= render 'layouts/footer' %> </td>
+        </tr>
+        <tr >
+          <td>
+            <table bgcolor="#262323" width="100%">
+              <tr><td>
+                  <font color="#fff">&#169opyright 2012</font>
+                </td></tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <%= debug(params) if Rails.env.development? %>
+  </center>
+</body>
+</html>
